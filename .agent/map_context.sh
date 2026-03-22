@@ -66,6 +66,24 @@ elif [ -f pom.xml ]; then
 elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then
     echo "Runtime: Java/Kotlin (Gradle)"
     ls build.gradle build.gradle.kts 2>/dev/null
+elif [ -f CMakeLists.txt ]; then
+    echo "Runtime: C/C++ (CMake)"
+    head -10 CMakeLists.txt
+elif [ -f composer.json ]; then
+    echo "Runtime: PHP"
+    head -20 composer.json
+elif [ -f Package.swift ]; then
+    echo "Runtime: Swift"
+    head -10 Package.swift
+elif [ -f Gemfile ]; then
+    echo "Runtime: Ruby"
+    head -15 Gemfile
+elif [ -f Chart.yaml ]; then
+    echo "Runtime: Helm chart"
+    cat Chart.yaml
+elif ls ./*.tf >/dev/null 2>&1; then
+    echo "Runtime: Terraform"
+    ls ./*.tf 2>/dev/null
 else
     CSPROJ=$(find . -maxdepth 2 -name '*.csproj' 2>/dev/null | head -1)
     SLN=$(find . -maxdepth 2 -name '*.sln' 2>/dev/null | head -1)

@@ -77,17 +77,31 @@ a uniform interface regardless of project language.
 
 | Target | Runs |
 |--------|------|
-| `make test` | pytest / jest / vitest / go test / cargo test / dotnet test / mvn test / gradlew test |
-| `make lint` | ruff / flake8 / eslint / biome / golangci-lint / go vet / clippy / dotnet build /warnaserror / mvn checkstyle / gradlew checkstyleMain |
-| `make format` | ruff format / black / prettier / biome / gofmt / cargo fmt / dotnet format / mvn spotless / gradlew spotlessApply |
+| `make test` | pytest · jest/vitest · go test · cargo test · dotnet test · mvn test · gradlew test · ctest · phpunit · swift test · rspec · terraform validate · helm template |
+| `make lint` | ruff/flake8 · eslint/biome · golangci-lint · clippy · dotnet /warnaserror · mvn checkstyle · clang-tidy/cppcheck · phpcs · swiftlint · rubocop · tflint · helm lint |
+| `make format` | ruff/black · prettier/biome · gofmt · cargo fmt · dotnet format · spotless · clang-format · php-cs-fixer · swift-format · rubocop -a · terraform fmt |
 | `make validate` | JSON + YAML syntax (python3 built-ins) |
 | `make check` | test + lint + validate — all run independently |
 | `make map` | sh .agent/map_context.sh |
 | `make help` | Lists targets + detected stack |
 
-Stack auto-detected from: `package.json` → node (TypeScript inclus) · `pyproject.toml`/`setup.py` → python ·
-`go.mod` → go · `Cargo.toml` → rust · `*.csproj`/`*.sln` → dotnet · `pom.xml` → java-maven ·
-`build.gradle`/`build.gradle.kts` → java-gradle.
+Stack auto-detected from manifest file at project root (last match wins):
+
+| Fichier détecté | Stack |
+|---|---|
+| `package.json` | node (JS + TypeScript) |
+| `pyproject.toml` / `setup.py` | python |
+| `go.mod` | go |
+| `Cargo.toml` | rust |
+| `*.csproj` / `*.sln` | dotnet (C#) |
+| `pom.xml` | java-maven |
+| `build.gradle` / `build.gradle.kts` | java-gradle (Kotlin inclus) |
+| `CMakeLists.txt` | cmake (C/C++) |
+| `composer.json` | php |
+| `Package.swift` | swift |
+| `Gemfile` | ruby |
+| `Chart.yaml` | helm |
+| `*.tf` | terraform |
 
 ### Agent self-correction protocol
 
