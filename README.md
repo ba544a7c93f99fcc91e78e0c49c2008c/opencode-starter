@@ -121,7 +121,46 @@ flowchart LR
 
 ---
 
-## Get started in 3 steps
+## Get started
+
+### New to OpenCode + GitHub Copilot?
+
+**Step 1 — Install the tools**
+
+```bash
+# Install OpenCode
+npm install -g opencode-ai
+
+# GitHub Copilot Premium: activate at github.com/features/copilot
+# Then authenticate OpenCode with your GitHub account
+opencode auth github
+```
+
+**Step 2 — Copy the starter into your project**
+
+```bash
+git clone https://github.com/[your-username]/opencode-starter .opencode-starter
+cp .opencode-starter/templates/PLAN.md ./PLAN.md
+cp -r .opencode-starter/.opencode ./.opencode
+```
+
+**Step 3 — Write your first PLAN.md**
+
+Don't start with a blank file. Pick an example from [docs/USE-CASES.md](docs/USE-CASES.md), copy the block, and fill in your values. Takes 5 minutes.
+
+See [docs/WRITING-YOUR-PLAN.md](docs/WRITING-YOUR-PLAN.md) for the full guide.
+
+**Step 4 — Start your first session**
+
+```bash
+opencode
+```
+
+Type `/onboard` — the agent asks 8 calibration questions and creates your developer profile. This runs once, then every session starts directly from your `PLAN.md`.
+
+---
+
+### Already know the stack?
 
 ```bash
 # 1. Copy this repo into your project
@@ -131,7 +170,7 @@ git clone https://github.com/[your-username]/opencode-starter .opencode-starter
 cp .opencode-starter/templates/PLAN.md ./PLAN.md
 cp -r .opencode-starter/.opencode ./.opencode
 
-# 3. Write your PLAN.md (see docs/WRITING-YOUR-PLAN.md), open OpenCode, type /onboard
+# 3. Write your PLAN.md, open OpenCode, type /onboard
 opencode
 ```
 
