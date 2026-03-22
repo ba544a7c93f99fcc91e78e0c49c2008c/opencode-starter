@@ -36,10 +36,12 @@ flowchart TD
     A --> SK[skills/]
 
     C --> c1["/onboard"]
-    C --> c2["/map"]
-    C --> c3["/compact"]
-    C --> c4["/review"]
-    C --> c5["/test"]
+    C --> c2["/architect"]
+    C --> c3["/map"]
+    C --> c4["/compact"]
+    C --> c5["/review"]
+    C --> c6["/test"]
+    C --> c7["/debug"]
 
     AG --> a1["reviewer · Sonnet"]
     AG --> a2["tester · Haiku"]
@@ -88,6 +90,10 @@ sequenceDiagram
 flowchart TD
     H([Human])
 
+    H -->|"/architect"| ARCH[architect agent]
+    ARCH --> Q[Targeted questions]
+    Q --> PL[PLAN.md generated]
+
     H -->|"/review"| RV["reviewer (read-only)"]
     RV --> GD[git diff]
     GD --> R1[Review report]
@@ -103,6 +109,11 @@ flowchart TD
     H -->|"/compact"| B2[build agent]
     B2 --> MEM["MEMORY.md condensed"]
     B2 --> ARC["memory/archive/"]
+
+    H -->|"/debug"| DBG[build agent]
+    DBG --> DR[Debug report]
+    DR --> HD{Human decides}
+    HD -->|unblocked| BLD2[build agent]
 ```
 
 ---
@@ -186,7 +197,7 @@ opencode-starter/
 ├── ONBOARD.md             ← First-run setup
 │
 ├── templates/             ← Copy these into your project
-│   ├── PLAN.md            ← YOU write this before the session. Agent reads it. Read-only.
+│   ├── PLAN.md            ← Human approves this. Use /architect or write it yourself. Read-only.
 │   ├── MEMORY.md          ← Agent manages this
 │   ├── BACKLOG.md         ← Agent manages this
 │   ├── HUMAN.md           ← Your action items, surfaced by agent
@@ -197,10 +208,12 @@ opencode-starter/
 ├── .opencode/
 │   ├── commands/          ← Slash commands
 │   │   ├── onboard.md     ← /onboard
+│   │   ├── architect.md   ← /architect
 │   │   ├── map.md         ← /map
 │   │   ├── compact.md     ← /compact
 │   │   ├── review.md      ← /review
-│   │   └── test.md        ← /test
+│   │   ├── test.md        ← /test
+│   │   └── debug.md       ← /debug
 │   │
 │   ├── agents/            ← Specialized sub-agents
 │   │   ├── reviewer.md    ← Read-only code reviewer
@@ -229,10 +242,12 @@ opencode-starter/
 | Command | What it does |
 |---------|-------------|
 | `/onboard` | First-run profile setup. Skips if profile exists. |
+| `/architect` | Generate PLAN.md from a rough intent — targeted questions, section-by-section approval. |
 | `/map` | Map the project scoped to PLAN.md. Updates PROJECT-MAP.md. |
 | `/compact` | Summarize and archive memory when it gets heavy. |
 | `/review` | Trigger reviewer agent on modified files. |
 | `/test` | Trigger tester agent, run tests, get report. |
+| `/debug` | Diagnose a blocked agent — surfaces contradictions and the human decision needed to unblock. |
 
 ---
 

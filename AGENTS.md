@@ -70,10 +70,12 @@ When in doubt — if the command changes state anywhere, it's a write. Ask.
 | Command | Action |
 |---|---|
 | `/onboard` | Initial developer profile setup |
+| `/architect` | Generate PLAN.md from rough intent — questions + section-by-section approval |
 | `/map` | Map project per PLAN.md scope |
 | `/compact` | Summarize and archive memory |
 | `/review` | Trigger reviewer agent on modified code |
 | `/test` | Trigger tester agent and report |
+| `/debug` | Diagnose a blocked agent — surfaces contradictions and decision points |
 
 ---
 
