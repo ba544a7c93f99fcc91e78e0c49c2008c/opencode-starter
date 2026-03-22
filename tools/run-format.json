@@ -1,0 +1,24 @@
+{
+  "name": "run-format",
+  "description": "Auto-format source code. Uses ruff/black (Python), prettier/biome (Node), gofmt (Go), cargo fmt (Rust), dotnet format (C#). Write operation — requires human 'go' in production context.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "check_only": {
+        "type": "boolean",
+        "description": "If true, report formatting issues without applying changes.",
+        "default": false
+      }
+    },
+    "required": []
+  },
+  "invocation": {
+    "type": "shell",
+    "command": "make format"
+  },
+  "output": {
+    "type": "text",
+    "on_failure": "report_to_human"
+  },
+  "write_gate": true
+}

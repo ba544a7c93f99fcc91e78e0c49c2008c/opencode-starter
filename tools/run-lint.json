@@ -1,0 +1,24 @@
+{
+  "name": "run-lint",
+  "description": "Run the linter for the detected stack. Auto-detects ruff/flake8 (Python), eslint/biome (Node), golangci-lint/go vet (Go), clippy (Rust), dotnet build /warnaserror (C#).",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "fix": {
+        "type": "boolean",
+        "description": "If true, attempt to auto-fix lint issues where supported.",
+        "default": false
+      }
+    },
+    "required": []
+  },
+  "invocation": {
+    "type": "shell",
+    "command": "make lint"
+  },
+  "output": {
+    "type": "text",
+    "on_failure": "agent_self_correct"
+  },
+  "write_gate": false
+}

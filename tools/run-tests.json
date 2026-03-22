@@ -1,0 +1,23 @@
+{
+  "name": "run-tests",
+  "description": "Run the project test suite. Auto-detects framework (pytest, jest, vitest, go test, cargo test, dotnet test). Returns output for agent self-correction.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "scope": {
+        "type": "string",
+        "description": "Optional: path or test name filter. Leave empty for full suite."
+      }
+    },
+    "required": []
+  },
+  "invocation": {
+    "type": "shell",
+    "command": "make test"
+  },
+  "output": {
+    "type": "text",
+    "on_failure": "agent_self_correct"
+  },
+  "write_gate": false
+}

@@ -1,0 +1,18 @@
+{
+  "name": "generate-map",
+  "description": "Generate a compressed project context snapshot. Outputs file tree, mission (PLAN.md), memory state, backlog, dependency manifest, git context. Read-only.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": []
+  },
+  "invocation": {
+    "type": "shell",
+    "command": "make map"
+  },
+  "output": {
+    "type": "text",
+    "on_failure": "report_to_human"
+  },
+  "write_gate": false
+}

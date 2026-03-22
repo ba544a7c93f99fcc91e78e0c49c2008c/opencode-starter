@@ -1,0 +1,29 @@
+{
+  "name": "git-review",
+  "description": "Review git changes since last commit. Shows diff and triggers @reviewer sub-agent analysis. Read-only.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "staged_only": {
+        "type": "boolean",
+        "description": "If true, review only staged changes.",
+        "default": false
+      },
+      "file": {
+        "type": "string",
+        "description": "Optional: limit review to a specific file path."
+      }
+    },
+    "required": []
+  },
+  "invocation": {
+    "type": "opencode_command",
+    "command": "/review",
+    "shell_fallback": "git diff HEAD"
+  },
+  "output": {
+    "type": "structured_review",
+    "on_failure": "report_to_human"
+  },
+  "write_gate": false
+}

@@ -1,0 +1,24 @@
+{
+  "name": "scan-security",
+  "description": "Run a security scan. Uses bandit (Python), npm audit (Node), govulncheck (Go), cargo audit (Rust). Falls back to grep-based credential scan if no framework tool available. Read-only.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "scope": {
+        "type": "string",
+        "description": "Optional: limit scan to a specific directory or file pattern."
+      }
+    },
+    "required": []
+  },
+  "invocation": {
+    "type": "shell",
+    "command": "sh",
+    "args": ["-c", "if [ -f pyproject.toml ] || [ -f setup.py ]; then python -m bandit -r . 2>/dev/null || echo '[security] Install bandit: pip install bandit'; elif [ -f package.json ]; then npm audit; elif [ -f go.mod ]; then govulncheck ./... 2>/dev/null || go vet ./...; elif [ -f Cargo.toml ]; then cargo audit 2>/dev/null || cargo check; else grep -rn --include='*.py' --include='*.js' --include='*.ts' --include='*.go' -E '(password|secret|api_key|token)\\s*=\\s*[\"'\\'']{1}[^\"'\\'']{8,}' . 2>/dev/null | grep -v '.git' | grep -v 'test' || echo 'No obvious hardcoded secrets found.'; fi"]
+  },
+  "output": {
+    "type": "text",
+    "on_failure": "report_to_human"
+  },
+  "write_gate": false
+}
