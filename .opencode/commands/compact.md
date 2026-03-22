@@ -8,11 +8,14 @@ Count the total number of lines. If over 500, propose compaction.
 
 **Compaction process:**
 
-1. Summarize the content of `MEMORY.md`, keeping only:
-   - Important architectural decisions
-   - Validated patterns
-   - Errors encountered and resolved
-   - Permanent human instructions
+1. Compress `MEMORY.md` using telegraphic style — no full sentences, key:value or tight
+   bullet points only. Examples:
+   - Decision: `Auth: JWT (stateless, mobile requirement)`
+   - Pattern: `DB: always use transactions for multi-table writes`
+   - Error resolved: `Redis timeout → missing keepalive, fixed config.ts:42`
+   - Instruction: `Never touch admin/ — prod only, manual deploys`
+   Remove all narrative, explanation, and conversational context.
+   If a fact can't be expressed in under 10 words, compress harder.
 
 2. Create a dated archive in `memory/archive/`:
    - Name: `YYYY-MM-DD_summary.md`

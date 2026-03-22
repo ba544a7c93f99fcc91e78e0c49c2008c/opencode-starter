@@ -17,10 +17,11 @@ Built from field experience. Not theory.
 ## Core idea
 
 ```
-Human writes PLAN.md → Agent does everything else
+Human approves PLAN.md → Agent does everything else
 ```
 
-That's it. The rest is guardrails and memory hygiene.
+Draft it with `/architect`, or write it yourself — see [docs/WRITING-YOUR-PLAN.md](docs/WRITING-YOUR-PLAN.md).
+The rest is guardrails and memory hygiene.
 
 ---
 

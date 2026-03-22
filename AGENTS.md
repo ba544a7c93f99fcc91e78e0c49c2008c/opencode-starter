@@ -6,7 +6,7 @@
 
 ## Philosophy
 
-- The human writes **PLAN.md** · The agent manages everything else
+- The human **approves** PLAN.md · The agent drafts it with `/architect` or the human writes it directly
 - One branch = one mission = clean context
 - Simple first, deep if needed
 - If info is missing → ask, never assume

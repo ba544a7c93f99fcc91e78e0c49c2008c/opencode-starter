@@ -37,3 +37,16 @@ Report to human:
 - Exact error (stack trace if available)
 - Probable cause in the implementation code
 - Suggested action for the build agent (never for you)
+
+## Circuit breaker
+
+If the same test fails with the same error 3 times in a row:
+1. Stop all code modification immediately
+2. Report to human:
+   - Test name
+   - Exact unchanged error
+   - Why code and test appear to be in contradiction
+   - What human decision is needed to unblock
+3. Wait. Do not retry.
+
+A loop that doesn't converge is a signal problem, not a code problem.
