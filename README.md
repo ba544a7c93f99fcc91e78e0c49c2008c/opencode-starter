@@ -25,32 +25,29 @@ The rest is guardrails and memory hygiene.
 
 ---
 
-## How it works
+## Architecture overview
 
 ```mermaid
 flowchart TD
-    H([Human]) --> P["PLAN.md (read-only)"]
-    P --> A[AGENTS.md]
-    A --> C[commands/]
-    A --> AG[agents/]
-    A --> SK[skills/]
+    H([Human]) --> P["PLAN.md\n(read-only mission)"]
 
-    C --> c1["/onboard"]
-    C --> c2["/architect"]
-    C --> c3["/map"]
-    C --> c4["/compact"]
-    C --> c5["/review"]
-    C --> c6["/test"]
-    C --> c7["/debug"]
-    C --> c8["/propose"]
+    P --> AGENTS["AGENTS.md\n(guardrails contract)"]
 
-    AG --> a1["reviewer · Sonnet"]
-    AG --> a2["tester · Haiku"]
-    AG --> a3["explorer · Sonnet"]
+    AGENTS --> CORE["Core layer"]
+    AGENTS --> PILLARS["Agentic pillars"]
 
-    SK --> s1[azure/SKILL.md]
-    SK --> s2[openshift/SKILL.md]
-    SK --> s3[terraform/SKILL.md]
+    subgraph CORE["Core layer"]
+        direction LR
+        C[commands/] --- AG[agents/] --- SK[skills/]
+    end
+
+    subgraph PILLARS["Agentic pillars"]
+        direction LR
+        D[".agent/\ndiscoverability"] --- PR["PROPOSAL.md\nplanning protocol"] --- MK["Makefile\nquality gate"] --- TL["tools/\nMCP abstraction"]
+    end
+
+    CORE --> OUT1[Work executed]
+    PILLARS --> OUT2[Self-corrected + verifiable]
 ```
 
 ---
@@ -65,19 +62,21 @@ sequenceDiagram
 
     H->>OC: opencode
     OC->>A: load AGENTS.md
+    A->>A: read .agent/AGENT_GUIDE.md  ← step 0 (fast orientation)
     A->>A: read DEVELOPER-PROFILE.md
     alt Profile missing
         A->>H: /onboard — calibration questions
         H->>A: answers
         A->>A: create DEVELOPER-PROFILE.md
     end
-    A->>A: read PLAN.md — mission scope
+    A->>A: read PLAN.md — mission scope (read-only)
     A->>A: read MEMORY.md — existing context
     A->>A: read BACKLOG.md — task status
     A->>H: Session ready
     loop Work
         H->>A: instruction or /command
         A->>A: execute within PLAN.md scope
+        A->>A: run make check — self-correct from output
         A->>A: update MEMORY.md
         A->>H: result
     end
@@ -94,6 +93,12 @@ flowchart TD
     H -->|"/architect"| ARCH[architect agent]
     ARCH --> Q[Targeted questions]
     Q --> PL[PLAN.md generated]
+
+    H -->|"/propose"| PROP[build agent]
+    PROP --> PRD[PROPOSAL.md drafted]
+    PRD -->|human reviews| GO{go?}
+    GO -->|yes| EXEC[agent executes]
+    GO -->|no| PROP
 
     H -->|"/review"| RV["reviewer (read-only)"]
     RV --> GD[git diff]
@@ -116,6 +121,42 @@ flowchart TD
     DR --> HD{Human decides}
     HD -->|unblocked| BLD2[build agent]
 ```
+
+---
+
+## Quality gate — `make check`
+
+The Makefile gives every agent a uniform quality gate regardless of project language.
+Auto-detects stack from manifest file at project root.
+
+```mermaid
+flowchart LR
+    CH["make check"] --> T["make test\npytest · jest · go test\ncargo test · dotnet test\n+8 more"]
+    CH --> L["make lint\nruff · eslint · golangci-lint\ncargo clippy · dotnet /warnaserror\n+8 more"]
+    CH --> V["make validate\nJSON + YAML syntax\npython3 built-ins"]
+
+    T --> R{All pass?}
+    L --> R
+    V --> R
+
+    R -->|yes| DONE[✓ Report to human]
+    R -->|no| FIX[Self-correct\nmax 3 attempts]
+    FIX --> CB{3rd attempt?}
+    CB -->|no| CH
+    CB -->|yes| STOP[Stop — report blocker]
+```
+
+```mermaid
+flowchart LR
+    SELF["make self-test"] --> GA["Group A\nFile existence\n14 files"]
+    SELF --> GB["Group B\nInvariants\nline counts · sections"]
+    SELF --> GC["Group C\nJSON validity\nall tools/*.json"]
+    SELF --> GD["Group D\nFrontmatter\nYAML in commands"]
+    SELF --> GE["Group E\nmap_context.sh\n9 banners + fallbacks"]
+    SELF --> GF["Group F\nStack detection\n13 stacks + precedence"]
+```
+
+**Supported stacks:** python · node (JS/TS) · go · rust · dotnet (C#) · java-maven · java-gradle · cmake (C/C++) · php · swift · ruby · terraform · helm
 
 ---
 
@@ -198,7 +239,8 @@ opencode-starter/
 ├── ONBOARD.md             ← First-run setup
 │
 ├── templates/             ← Copy these into your project
-│   ├── PLAN.md            ← Human approves this. Use /architect or write it yourself. Read-only.
+│   ├── PLAN.md            ← Human approves this. Read-only for agent.
+│   ├── PROPOSAL.md        ← Agent drafts with /propose. Human approves.
 │   ├── MEMORY.md          ← Agent manages this
 │   ├── BACKLOG.md         ← Agent manages this
 │   ├── HUMAN.md           ← Your action items, surfaced by agent
@@ -210,6 +252,7 @@ opencode-starter/
 │   ├── commands/          ← Slash commands
 │   │   ├── onboard.md     ← /onboard
 │   │   ├── architect.md   ← /architect
+│   │   ├── propose.md     ← /propose
 │   │   ├── map.md         ← /map
 │   │   ├── compact.md     ← /compact
 │   │   ├── review.md      ← /review
@@ -222,24 +265,35 @@ opencode-starter/
 │   │   └── explorer.md    ← Read-only discovery & mapping
 │   │
 │   └── skills/            ← Domain expertise, loaded on demand
-│       ├── azure/
-│       │   └── SKILL.md
-│       ├── openshift/
-│       │   └── SKILL.md
-│       └── terraform/
-│           └── SKILL.md
+│       ├── azure/SKILL.md
+│       ├── openshift/SKILL.md
+│       └── terraform/SKILL.md
+│
+├── .agent/                ← AI-first discoverability (Pillar 1)
+│   ├── AGENT_GUIDE.md     ← Machine-readable session index (YAML)
+│   └── map_context.sh     ← Compressed context snapshot
+│
+├── Makefile               ← Quality gate: test/lint/format/validate/check/self-test
+├── make.ps1               ← Same targets for Windows 10/11 (PowerShell)
+│
+├── tools/                 ← MCP-compatible tool definitions (Pillar 4)
+│   ├── tools-manifest.json
+│   ├── run-tests.json
+│   ├── run-lint.json
+│   ├── run-format.json    ← write_gate: true
+│   ├── generate-map.json
+│   ├── scan-security.json
+│   └── git-review.json
+│
+├── tests/
+│   └── run.sh             ← Self-test suite (69 tests, zero dependencies)
 │
 ├── memory/                ← Local only, git-ignored
-├── .agent/                ← AI-first discoverability
-│   ├── AGENT_GUIDE.md     ← Machine-readable session index
-│   └── map_context.sh     ← Compressed context snapshot
-├── Makefile               ← Self-correction quality gate (test/lint/format/check)
-├── tools/                 ← MCP-compatible tool definitions
-│   └── tools-manifest.json
 └── docs/
     ├── PHILOSOPHY.md
     ├── CUSTOMIZE.md
-    ├── PILLARS.md         ← Agentic pillars documentation
+    ├── PILLARS.md         ← Full 4-pillar documentation
+    ├── USE-CASES.md
     └── ADVANCED.md
 ```
 
@@ -247,16 +301,14 @@ opencode-starter/
 
 ## Agentic Pillars
 
-Four capability layers extending the base system:
+Four capability layers extending the base system. Full docs → [docs/PILLARS.md](docs/PILLARS.md)
 
-| Pillar | Location | What it adds |
-|--------|----------|-------------|
-| AI-First Discoverability | `.agent/` | Machine-readable guide + compressed context script |
-| Planning Protocol | `templates/PROPOSAL.md` + `/propose` | Agent-authored proposals, human-approved |
-| Self-Correction Loop | `Makefile` | Language-agnostic test/lint/format/check targets |
-| Tool Abstraction | `tools/` | JSON Schema definitions + MCP-compatible manifest |
-
-Full documentation → [docs/PILLARS.md](docs/PILLARS.md)
+| # | Pillar | Location | What it adds |
+|---|--------|----------|--------------|
+| 1 | AI-First Discoverability | `.agent/` | YAML session index + compressed snapshot script |
+| 2 | Planning Protocol | `templates/PROPOSAL.md` + `/propose` | Agent-authored proposals, human-approved before execution |
+| 3 | Self-Correction Loop | `Makefile` / `make.ps1` | 13-stack quality gate: test · lint · format · validate · check |
+| 4 | Tool Abstraction | `tools/` | JSON Schema definitions + MCP-compatible manifest |
 
 ---
 
@@ -266,12 +318,12 @@ Full documentation → [docs/PILLARS.md](docs/PILLARS.md)
 |---------|-------------|
 | `/onboard` | First-run profile setup. Skips if profile exists. |
 | `/architect` | Generate PLAN.md from a rough intent — targeted questions, section-by-section approval. |
+| `/propose` | Draft PROPOSAL.md before a major change — present to human, execute only after "go". |
 | `/map` | Map the project scoped to PLAN.md. Updates PROJECT-MAP.md. |
 | `/compact` | Summarize and archive memory when it gets heavy. |
 | `/review` | Trigger reviewer agent on modified files. |
 | `/test` | Trigger tester agent, run tests, get report. |
 | `/debug` | Diagnose a blocked agent — surfaces contradictions and the human decision needed to unblock. |
-| `/propose` | Draft a PROPOSAL.md before a major change — present to human, execute only after "go". |
 
 ---
 
@@ -288,12 +340,30 @@ A test is never modified to make it pass. Root cause is reported to human.
 
 ---
 
+## Makefile quick reference
+
+| Target | Description | Write? |
+|--------|-------------|--------|
+| `make test` | Run the project test suite | No |
+| `make lint` | Run the linter | No |
+| `make format` | Auto-format source code | **Yes — requires "go"** |
+| `make validate` | Validate JSON + YAML syntax | No |
+| `make check` | test + lint + validate (all independent) | No |
+| `make map` | Generate compressed context snapshot | No |
+| `make self-test` | Run the starter's own 69-test suite | No |
+| `make help` | List targets + detected stack | No |
+
+Windows: use `.\make.ps1 <target>` instead (PowerShell, no WSL required for most targets).
+
+---
+
 ## Absolute rules
 
 - `PLAN.md` — Read-only. Always. Conflict → flag to human.
 - Destructive commands → Show command + target + env + impact. Wait for **"go"**.
 - `memory/` → Agent-only. Human doesn't touch it.
 - Tests → Never modified to pass. Root cause always reported.
+- Changes touching > 3 files or with regression risk → run `/propose` first.
 
 ---
 
