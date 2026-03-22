@@ -70,8 +70,12 @@ echo ""
 
 echo "--- MEMORY SIZE ---"
 if [ -d memory ]; then
-    echo "memory/ files:"
-    find memory -name '*.md' -not -path 'memory/archive/*' | xargs wc -l 2>/dev/null | tail -1
+    COUNT=$(find memory -name '*.md' -not -path 'memory/archive/*' | xargs wc -l 2>/dev/null | tail -1)
+    if [ -n "$COUNT" ]; then
+        echo "memory/ total lines: $COUNT"
+    else
+        echo "memory/ total lines: 0"
+    fi
     echo "Threshold for /compact: 500 lines"
 else
     echo "[memory/ directory not present]"
@@ -79,7 +83,7 @@ fi
 echo ""
 
 echo "--- GIT CONTEXT ---"
-if [ -d .git ]; then
+if git rev-parse --git-dir >/dev/null 2>&1; then
     echo "Branch: $(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
     echo "Last 5 commits:"
     git log --oneline -5 2>/dev/null
