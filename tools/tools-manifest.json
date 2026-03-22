@@ -1,0 +1,13 @@
+{
+  "name": "opencode-starter-tools",
+  "version": "1.0.0",
+  "description": "Agentic tool definitions for opencode-starter. Language-agnostic. No external dependencies.",
+  "tools": [
+    { "name": "run-tests",    "$ref": "run-tests.json"    },
+    { "name": "run-lint",     "$ref": "run-lint.json"     },
+    { "name": "run-format",   "$ref": "run-format.json"   },
+    { "name": "generate-map", "$ref": "generate-map.json" },
+    { "name": "scan-security","$ref": "scan-security.json"},
+    { "name": "git-review",   "$ref": "git-review.json"   }
+  ]
+}
