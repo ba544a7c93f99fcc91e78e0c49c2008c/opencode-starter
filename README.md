@@ -42,6 +42,7 @@ flowchart TD
     C --> c5["/review"]
     C --> c6["/test"]
     C --> c7["/debug"]
+    C --> c8["/propose"]
 
     AG --> a1["reviewer · Sonnet"]
     AG --> a2["tester · Haiku"]
@@ -193,7 +194,7 @@ opencode
 ```
 opencode-starter/
 │
-├── AGENTS.md              ← Agent instructions (80 lines max)
+├── AGENTS.md              ← Agent instructions (120 lines max)
 ├── ONBOARD.md             ← First-run setup
 │
 ├── templates/             ← Copy these into your project

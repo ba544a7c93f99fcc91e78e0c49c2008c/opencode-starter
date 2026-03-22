@@ -6,7 +6,7 @@
     "properties": {
       "scope": {
         "type": "string",
-        "description": "Optional: limit scan to a specific directory or file pattern."
+        "description": "Advisory hint: if provided, the calling agent should pass this as the target path to the framework scanner directly (e.g. bandit -r path/). The default invocation scans the entire project."
       }
     },
     "required": []

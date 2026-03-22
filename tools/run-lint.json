@@ -6,7 +6,7 @@
     "properties": {
       "fix": {
         "type": "boolean",
-        "description": "If true, attempt to auto-fix lint issues where supported.",
+        "description": "Advisory hint: if true, the calling agent should invoke the linter's auto-fix variant directly (e.g. ruff check --fix, eslint --fix) rather than using make lint.",
         "default": false
       }
     },

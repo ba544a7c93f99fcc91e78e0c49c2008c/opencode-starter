@@ -6,7 +6,7 @@
     "properties": {
       "scope": {
         "type": "string",
-        "description": "Optional: path or test name filter. Leave empty for full suite."
+        "description": "Advisory hint: path or test name filter. The calling agent should use this to adjust the make test invocation or framework command directly (e.g. pytest path/). Leave empty for full suite."
       }
     },
     "required": []
