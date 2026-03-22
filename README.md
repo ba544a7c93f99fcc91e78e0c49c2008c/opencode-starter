@@ -229,11 +229,33 @@ opencode-starter/
 │           └── SKILL.md
 │
 ├── memory/                ← Local only, git-ignored
+├── .agent/                ← AI-first discoverability
+│   ├── AGENT_GUIDE.md     ← Machine-readable session index
+│   └── map_context.sh     ← Compressed context snapshot
+├── Makefile               ← Self-correction quality gate (test/lint/format/check)
+├── tools/                 ← MCP-compatible tool definitions
+│   └── tools-manifest.json
 └── docs/
     ├── PHILOSOPHY.md
     ├── CUSTOMIZE.md
+    ├── PILLARS.md         ← Agentic pillars documentation
     └── ADVANCED.md
 ```
+
+---
+
+## Agentic Pillars
+
+Four capability layers extending the base system:
+
+| Pillar | Location | What it adds |
+|--------|----------|-------------|
+| AI-First Discoverability | `.agent/` | Machine-readable guide + compressed context script |
+| Planning Protocol | `templates/PROPOSAL.md` + `/propose` | Agent-authored proposals, human-approved |
+| Self-Correction Loop | `Makefile` | Language-agnostic test/lint/format/check targets |
+| Tool Abstraction | `tools/` | JSON Schema definitions + MCP-compatible manifest |
+
+Full documentation → [docs/PILLARS.md](docs/PILLARS.md)
 
 ---
 
@@ -248,6 +270,7 @@ opencode-starter/
 | `/review` | Trigger reviewer agent on modified files. |
 | `/test` | Trigger tester agent, run tests, get report. |
 | `/debug` | Diagnose a blocked agent — surfaces contradictions and the human decision needed to unblock. |
+| `/propose` | Draft a PROPOSAL.md before a major change — present to human, execute only after "go". |
 
 ---
 
