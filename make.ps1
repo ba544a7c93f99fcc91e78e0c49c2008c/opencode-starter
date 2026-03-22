@@ -199,19 +199,28 @@ function Invoke-Map {
     }
 }
 
+# ─── self-test ────────────────────────────────────────────────────────────────
+
+function Invoke-SelfTest {
+    if (Get-Command wsl  -ErrorAction SilentlyContinue) { wsl sh tests/run.sh }
+    elseif (Get-Command bash -ErrorAction SilentlyContinue) { bash tests/run.sh }
+    else { Write-Host "[self-test] WSL or bash required. Install WSL: wsl --install" }
+}
+
 # ─── help ─────────────────────────────────────────────────────────────────────
 
 function Invoke-Help {
     Write-Host "opencode-starter make.ps1"
     Write-Host "Detected stack: $Stack"
     Write-Host ""
-    Write-Host "  .\make.ps1 test      Run the project test suite"
-    Write-Host "  .\make.ps1 lint      Run the linter"
-    Write-Host "  .\make.ps1 format    Auto-format source code"
-    Write-Host "  .\make.ps1 validate  Validate JSON and YAML syntax"
-    Write-Host "  .\make.ps1 check     Full quality gate (test + lint + validate)"
-    Write-Host "  .\make.ps1 map       Generate context snapshot (requires WSL or bash)"
-    Write-Host "  .\make.ps1 help      Show this help"
+    Write-Host "  .\make.ps1 test       Run the project test suite"
+    Write-Host "  .\make.ps1 lint       Run the linter"
+    Write-Host "  .\make.ps1 format     Auto-format source code"
+    Write-Host "  .\make.ps1 validate   Validate JSON and YAML syntax"
+    Write-Host "  .\make.ps1 check      Full quality gate (test + lint + validate)"
+    Write-Host "  .\make.ps1 map        Generate context snapshot (requires WSL or bash)"
+    Write-Host "  .\make.ps1 self-test  Run opencode-starter structural self-tests"
+    Write-Host "  .\make.ps1 help       Show this help"
     Write-Host ""
     Write-Host "Supported stacks: python · node (JS/TS) · go · rust · dotnet · java-maven · java-gradle"
     Write-Host "                  cmake (C/C++) · php · swift · ruby · terraform · helm"
@@ -228,7 +237,8 @@ switch ($Target) {
     "format"   { Invoke-Format }
     "validate" { Invoke-Validate }
     "check"    { Invoke-Check }
-    "map"      { Invoke-Map }
-    "help"     { Invoke-Help }
+    "map"       { Invoke-Map }
+    "self-test" { Invoke-SelfTest }
+    "help"      { Invoke-Help }
     default    { Write-Host "Unknown target: $Target. Run .\make.ps1 help"; exit 1 }
 }
