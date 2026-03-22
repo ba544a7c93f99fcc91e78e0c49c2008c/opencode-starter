@@ -218,6 +218,20 @@ A test is never modified to make it pass. Root cause is reported to human.
 
 ---
 
+## Security
+
+**Run agents with the minimum permissions needed for the task.**
+
+- Use a dedicated service account or sandbox identity — never your personal admin credentials
+- In cloud environments: scope IAM/RBAC roles to the target resource group or namespace only
+- The agent will always ask for **"go"** before any write operation — never bypass this
+- For production access: use read-only credentials by default; grant write only for the specific operation
+
+> This project follows the **read-free / write-gate** principle: read operations run freely, write operations always require explicit human approval.
+> See [GUARDRAILS.md](https://guardrails.md/) and the [AGENTS.md standard](https://github.com/agentsmd/agents.md) for the broader conventions this project aligns with.
+
+---
+
 ## Customize
 
 See [docs/CUSTOMIZE.md](docs/CUSTOMIZE.md) for the 5-level customization guide.

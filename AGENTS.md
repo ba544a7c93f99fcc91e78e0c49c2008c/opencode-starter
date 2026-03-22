@@ -49,7 +49,13 @@ Scan docs/ and README.md → ask if you can read and update.
 
 **PLAN.md** — Never modified. Conflict detected → flag to human.
 
-**Destructive commands** — Show command + target + environment + impact. Wait for **"go"**.
+**Write operations** — Any command that creates, modifies, deletes, deploys, scales, or applies changes to infrastructure, data, or configuration requires: show command + target + environment + impact, then wait for **"go"**. Read operations (get, list, describe, show, status, diff, log) execute freely.
+
+| Requires "go" | Free to run |
+|---|---|
+| `az ... create/update/delete`, `kubectl apply/delete/scale`, `terraform apply/destroy`, `INSERT/UPDATE/DELETE/DROP`, `rm -rf`, `git push --force` | `az ... list/show`, `kubectl get/describe/logs`, `terraform plan`, `SELECT`, `git log/diff` |
+
+When in doubt — if the command changes state anywhere, it's a write. Ask.
 
 **Tests** — `@tester` writes and runs tests. `@build` writes code. Never both together. If test fails → report to human, never modify test to pass.
 

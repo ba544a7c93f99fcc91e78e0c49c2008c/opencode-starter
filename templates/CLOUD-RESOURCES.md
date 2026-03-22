@@ -21,5 +21,22 @@
 - **Staging** → Human confirmation required
 - **Prod** → Mandatory "go" + show exact command
 
+## Read vs Write — Command Classification
+
+Read operations execute freely (no approval needed):
+- `az ... list / show / get / describe`
+- `kubectl get / describe / logs`
+- `terraform plan`
+- `SELECT ...` queries
+
+Write operations always require **"go"** — regardless of environment:
+- `az ... create / update / delete / set`
+- `kubectl apply / delete / scale / rollout`
+- `terraform apply / destroy`
+- `INSERT / UPDATE / DELETE / DROP`
+- Any flag: `--force`, `--delete`, `--purge`, `--override`
+
+When in doubt: if the command changes state anywhere, it's a write. Ask.
+
 ## Sensitive Commands
-> Always ask for "go" before executing on staging or prod.
+> Always ask for "go" before any write operation, on any environment.
