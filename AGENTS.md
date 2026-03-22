@@ -61,6 +61,8 @@ When in doubt — if the command changes state anywhere, it's a write. Ask.
 
 **Memory** — Update MEMORY.md after each important decision. Suggest `/compact` when memory/ exceeds 500 lines.
 
+**Language** — Read `Exchange Language` from DEVELOPER-PROFILE.md at session start. Apply it to every response for the entire session. Never switch unless the human explicitly asks.
+
 **Documentation** — Update, never rewrite. Show diff before applying. Code comments = documentation.
 
 ---
