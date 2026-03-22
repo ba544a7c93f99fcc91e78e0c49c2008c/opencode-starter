@@ -131,7 +131,7 @@ git clone https://github.com/[your-username]/opencode-starter .opencode-starter
 cp .opencode-starter/templates/PLAN.md ./PLAN.md
 cp -r .opencode-starter/.opencode ./.opencode
 
-# 3. Write your objective in PLAN.md, open OpenCode, type /onboard
+# 3. Write your PLAN.md (see docs/WRITING-YOUR-PLAN.md), open OpenCode, type /onboard
 opencode
 ```
 
@@ -146,7 +146,7 @@ opencode-starter/
 ├── ONBOARD.md             ← First-run setup
 │
 ├── templates/             ← Copy these into your project
-│   ├── PLAN.md            ← YOU write this. Agent reads it. Read-only.
+│   ├── PLAN.md            ← YOU write this before the session. Agent reads it. Read-only.
 │   ├── MEMORY.md          ← Agent manages this
 │   ├── BACKLOG.md         ← Agent manages this
 │   ├── HUMAN.md           ← Your action items, surfaced by agent
