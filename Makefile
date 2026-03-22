@@ -12,7 +12,7 @@
 # Windows 10/11: use .\make.ps1 (PowerShell) or install GNU Make via winget.
 # WSL/Ubuntu: use this Makefile directly.
 
-.PHONY: test lint format validate check map help
+.PHONY: test lint format validate check map self-test help
 
 # ─── Stack detection ─────────────────────────────────────────────────────────
 # Last match wins. Infrastructure stacks (terraform, helm) are last
@@ -267,6 +267,12 @@ check:
 ## map: Generate compressed project context snapshot
 map:
 	@sh .agent/map_context.sh
+
+# ─── self-test ────────────────────────────────────────────────────────────────
+
+## self-test: Run opencode-starter structural self-tests (zero dependencies)
+self-test:
+	@sh tests/run.sh
 
 # ─── help ─────────────────────────────────────────────────────────────────────
 
