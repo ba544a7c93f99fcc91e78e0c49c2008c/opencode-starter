@@ -1,0 +1,15 @@
+# Claude Code session files
+.claude/
+
+# Local memory — agent-managed, never committed
+memory/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
