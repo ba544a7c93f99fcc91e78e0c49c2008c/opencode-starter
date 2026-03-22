@@ -26,6 +26,21 @@ endif
 ifneq ($(wildcard Cargo.toml),)
   STACK := rust
 endif
+ifneq ($(wildcard *.csproj),)
+  STACK := dotnet
+endif
+ifneq ($(wildcard *.sln),)
+  STACK := dotnet
+endif
+ifneq ($(wildcard pom.xml),)
+  STACK := java-maven
+endif
+ifneq ($(wildcard build.gradle),)
+  STACK := java-gradle
+endif
+ifneq ($(wildcard build.gradle.kts),)
+  STACK := java-gradle
+endif
 
 ifeq ($(STACK),node)
   ifneq ($(shell grep -l '"vitest"' package.json 2>/dev/null),)
@@ -59,6 +74,12 @@ else ifeq ($(STACK),go)
 	go test ./...
 else ifeq ($(STACK),rust)
 	cargo test
+else ifeq ($(STACK),dotnet)
+	dotnet test
+else ifeq ($(STACK),java-maven)
+	mvn test
+else ifeq ($(STACK),java-gradle)
+	./gradlew test
 else
 	@echo "[test] Stack '$(STACK)' not detected. Add your test command to this Makefile."
 	@exit 1
@@ -78,6 +99,12 @@ else ifeq ($(STACK),go)
 	@command -v golangci-lint >/dev/null 2>&1 && golangci-lint run || go vet ./...
 else ifeq ($(STACK),rust)
 	cargo clippy
+else ifeq ($(STACK),dotnet)
+	dotnet build --no-restore /warnaserror
+else ifeq ($(STACK),java-maven)
+	mvn checkstyle:check 2>/dev/null || mvn verify -DskipTests
+else ifeq ($(STACK),java-gradle)
+	./gradlew checkstyleMain 2>/dev/null || ./gradlew build -x test
 else
 	@echo "[lint] Stack '$(STACK)' not detected. Add your lint command to this Makefile."
 	@exit 1
@@ -97,6 +124,12 @@ else ifeq ($(STACK),go)
 	gofmt -w .
 else ifeq ($(STACK),rust)
 	cargo fmt
+else ifeq ($(STACK),dotnet)
+	dotnet format
+else ifeq ($(STACK),java-maven)
+	mvn spotless:apply 2>/dev/null || echo "[format] Add spotless-maven-plugin to pom.xml for auto-format."
+else ifeq ($(STACK),java-gradle)
+	./gradlew spotlessApply 2>/dev/null || echo "[format] Add com.diffplug.spotless plugin to build.gradle for auto-format."
 else
 	@echo "[format] Stack '$(STACK)' not detected. Add your format command to this Makefile."
 	@exit 1

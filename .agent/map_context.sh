@@ -63,8 +63,22 @@ elif [ -f Cargo.toml ]; then
 elif [ -f pom.xml ]; then
     echo "Runtime: Java/Maven"
     head -20 pom.xml
+elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then
+    echo "Runtime: Java/Kotlin (Gradle)"
+    ls build.gradle build.gradle.kts 2>/dev/null
 else
-    echo "[No recognized package manifest found]"
+    CSPROJ=$(find . -maxdepth 2 -name '*.csproj' 2>/dev/null | head -1)
+    SLN=$(find . -maxdepth 2 -name '*.sln' 2>/dev/null | head -1)
+    if [ -n "$SLN" ]; then
+        echo "Runtime: .NET (solution)"
+        echo "Solution: $SLN"
+        find . -maxdepth 3 -name '*.csproj' 2>/dev/null
+    elif [ -n "$CSPROJ" ]; then
+        echo "Runtime: .NET"
+        echo "Project: $CSPROJ"
+    else
+        echo "[No recognized package manifest found]"
+    fi
 fi
 echo ""
 

@@ -77,16 +77,17 @@ a uniform interface regardless of project language.
 
 | Target | Runs |
 |--------|------|
-| `make test` | pytest / jest / vitest / go test / cargo test |
-| `make lint` | ruff / flake8 / eslint / biome / golangci-lint / go vet / clippy |
-| `make format` | ruff format / black / prettier / biome / gofmt / cargo fmt |
+| `make test` | pytest / jest / vitest / go test / cargo test / dotnet test / mvn test / gradlew test |
+| `make lint` | ruff / flake8 / eslint / biome / golangci-lint / go vet / clippy / dotnet build /warnaserror / mvn checkstyle / gradlew checkstyleMain |
+| `make format` | ruff format / black / prettier / biome / gofmt / cargo fmt / dotnet format / mvn spotless / gradlew spotlessApply |
 | `make validate` | JSON + YAML syntax (python3 built-ins) |
 | `make check` | test + lint + validate — all run independently |
 | `make map` | sh .agent/map_context.sh |
 | `make help` | Lists targets + detected stack |
 
-Stack auto-detected from: `package.json` → node · `pyproject.toml`/`setup.py` → python ·
-`go.mod` → go · `Cargo.toml` → rust.
+Stack auto-detected from: `package.json` → node (TypeScript inclus) · `pyproject.toml`/`setup.py` → python ·
+`go.mod` → go · `Cargo.toml` → rust · `*.csproj`/`*.sln` → dotnet · `pom.xml` → java-maven ·
+`build.gradle`/`build.gradle.kts` → java-gradle.
 
 ### Agent self-correction protocol
 
