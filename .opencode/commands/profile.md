@@ -1,5 +1,6 @@
 ---
 description: "Display the active developer profile and configured agents summary"
+agent: build
 ---
 Read and display the current configuration in two sections.
 

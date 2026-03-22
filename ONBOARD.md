@@ -53,26 +53,29 @@ After answers, create `DEVELOPER-PROFILE.md` with this format:
 # Developer Profile
 
 ## Exchange Language
-- [answer]
+- [x] English / French / Both  ← check the chosen one
 
 ## Main Stack
-- Language: [answer]
+- Dominant language: [answer]
 - Context: [answer]
 
 ## Familiar Patterns
 - [list]
 
 ## Detail Level
-- [answer]
+- [x] Short and direct / Detailed with context  ← check the chosen one
 
 ## Agent Personality
-- [answer]
+- [x] Pragmatic / Teacher / Challenger / Creative / Mixed  ← check the chosen one
 
 ## Conventions & Standards
 - [answer or "None specified"]
 
 ## Cloud Environments
 - [list]
+
+## Personal Notes
+- [anything the agent should know to work well with this developer]
 ```
 
 > Save to `~/.config/opencode/DEVELOPER-PROFILE.md` for global reuse across projects.

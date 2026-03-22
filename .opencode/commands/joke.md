@@ -1,5 +1,6 @@
 ---
 description: "Tell a random programming or geek joke — easter egg"
+agent: build
 ---
 Tell one programming, DevOps, or geek joke. Keep it short and dry.
 

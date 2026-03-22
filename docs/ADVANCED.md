@@ -114,7 +114,15 @@ pip install chromadb sentence-transformers --break-system-packages
 Index the memory/ directory:
 ```python
 import chromadb
-# See docs/examples/rag-setup.py for the full example
+
+client = chromadb.Client()
+collection = client.create_collection("memory")
+
+import os
+for f in os.listdir("memory"):
+    if f.endswith(".md"):
+        text = open(f"memory/{f}").read()
+        collection.add(documents=[text], ids=[f])
 ```
 
 > Recommended only if memory/ regularly exceeds 2000 lines.

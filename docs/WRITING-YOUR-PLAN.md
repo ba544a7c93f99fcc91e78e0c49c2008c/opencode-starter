@@ -4,6 +4,8 @@
 
 Write it before the session. Not during.
 
+Two ways to get there: write it yourself (this guide), or let `/architect` draft it for you based on a rough intent — then approve it section by section before the session starts.
+
 ---
 
 ## Why before?
