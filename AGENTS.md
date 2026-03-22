@@ -16,6 +16,7 @@
 ## Session Start
 
 ```
+0. .agent/AGENT_GUIDE.md  → structured index (skip if context is abundant)
 1. DEVELOPER-PROFILE.md   → calibrate profile and language
 2. PLAN.md                → mission scope (read-only)
 3. MEMORY.md              → existing context
@@ -36,6 +37,7 @@ Scan docs/ and README.md → ask if you can read and update.
 | File | Role | Agent can modify |
 |---|---|---|
 | `PLAN.md` | Source of truth · Read-only | ❌ Never |
+| `PROPOSAL.md` | Pre-change proposal · Agent drafts with `/propose` · Human approves | ✅ Agent drafts |
 | `MEMORY.md` | Session memory | ✅ Continuously |
 | `BACKLOG.md` | Tasks — agent-managed only | ✅ Agent only |
 | `HUMAN.md` | Human backlog — active reminders | ✅ Agent only |
@@ -48,6 +50,8 @@ Scan docs/ and README.md → ask if you can read and update.
 ## Absolute Rules
 
 **PLAN.md** — Never modified. Conflict detected → flag to human.
+
+**Proposals** — Changes touching > 3 files or with regression risk → run `/propose`, wait for "go". See `docs/PILLARS.md`.
 
 **Write operations** — Any command that creates, modifies, deletes, deploys, scales, or applies changes to infrastructure, data, or configuration requires: show command + target + environment + impact, then wait for **"go"**. Read operations (get, list, describe, show, status, diff, log) execute freely.
 
@@ -78,6 +82,7 @@ When in doubt — if the command changes state anywhere, it's a write. Ask.
 | `/review` | Trigger reviewer agent on modified code |
 | `/test` | Trigger tester agent and report |
 | `/debug` | Diagnose a blocked agent — surfaces contradictions and decision points |
+| `/propose` | Draft PROPOSAL.md before a major change — present to human, wait for "go" |
 
 ---
 
