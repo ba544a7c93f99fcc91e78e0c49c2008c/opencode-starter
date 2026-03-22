@@ -7,7 +7,7 @@ This guide explains how to adapt this starter to your situation.
 ## Level 1 — Quick Start (5 minutes)
 
 1. Copy `templates/PLAN.md` to your project root
-2. Write your `PLAN.md` — see [how to write a good one](WRITING-YOUR-PLAN.md)
+2. Write your `PLAN.md` — see [how to write a good one](WRITING-YOUR-PLAN.md) or grab one from [USE-CASES.md](USE-CASES.md)
 3. Open OpenCode in the directory
 4. Type `/onboard` on first use
 5. That's it. The agent does the rest.

@@ -133,6 +133,17 @@ The agent maps only the `src/api/payments` directory and its direct dependencies
 
 ---
 
+## Model Selection and Cost
+
+The starter is tiered by task cost:
+- `@tester` → Haiku (fast, cheap — test generation is repetitive and low-stakes)
+- `@reviewer` + `@explorer` → Sonnet (reasoning-intensive — catching bugs and mapping codebases)
+- Build agent → Sonnet (default — code generation requires full reasoning)
+
+To reduce costs further: add `model: anthropic/claude-haiku-4-5-20251001` to `.opencode/commands/map.md` if your `/map` runs are frequent. To track spend, use your provider's billing dashboard filtered by API key — no in-tool tracking is needed for a markdown-driven workflow.
+
+---
+
 ## Global vs Project Skills
 
 ```

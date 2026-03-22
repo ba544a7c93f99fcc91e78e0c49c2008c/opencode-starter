@@ -168,3 +168,9 @@ Before opening OpenCode:
 - [ ] Excluded scope has at least one explicit boundary
 - [ ] Technical decisions are written down, not left to the agent
 - [ ] Every success criterion is binary and verifiable by a command or output
+
+---
+
+## See also
+
+[docs/USE-CASES.md](USE-CASES.md) — 4 ready-to-use PLAN.md examples for common scenarios (fix test, add tests, refactor, document API).
