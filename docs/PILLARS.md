@@ -144,3 +144,14 @@ Tools with write impact require the same human "go" as any other write operation
 3. Reference the Makefile target or shell command in `invocation`
 
 Keep tools thin — they describe what to invoke, not how to implement it.
+
+### What these are — and what they're not
+
+The files in `tools/` are **JSON Schema descriptors**, not runtime tools.
+They describe what an operation does, what inputs it accepts, and whether it writes.
+
+To use them as a live MCP server, you would need to implement an MCP server that serves
+these schemas and routes calls to their `invocation` targets. That is out of scope for
+this starter — see the [OpenCode MCP docs](https://opencode.ai/docs) for setup.
+
+For lightweight tool execution without a server, use the Makefile targets directly.

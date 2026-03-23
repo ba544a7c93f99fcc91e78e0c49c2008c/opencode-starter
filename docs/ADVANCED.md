@@ -79,27 +79,36 @@ Coordinate via BACKLOG.md and HUMAN.md.
 
 ---
 
-## Native OpenCode Hooks
+## OpenCode Hooks & Plugins (optional automation)
 
-To automate after each file modification, create `.opencode/plugin/auto-test.ts`:
+OpenCode supports JavaScript/TypeScript plugins that run on platform events.
+Place plugins in `.opencode/plugins/` — they use Bun's module system
+(already available since OpenCode itself runs on Bun).
 
-```typescript
-import type { Plugin } from "@opencode-ai/plugin"
+**Auto-validate JSON/YAML on edit** — runs `make validate` whenever a config file is saved:
 
-export const AutoTest: Plugin = async ({ client }) => {
-  return {
-    tool: {
-      execute: {
-        after: async (input) => {
-          if (input.tool === "edit") {
-            console.log("File modified — consider running /test")
-          }
-        }
-      }
-    }
+```javascript
+// .opencode/plugins/validate-on-edit.js
+export default {
+  "file.edited": async ({ $, directory }) => {
+    await $`make validate`.cwd(directory).quiet().nothrow()
   }
 }
 ```
+
+**Context snapshot on session start** — runs `make map` when a new session opens:
+
+```javascript
+// .opencode/plugins/session-start.js
+export default {
+  "session.created": async ({ $, directory }) => {
+    await $`sh .agent/map_context.sh`.cwd(directory).quiet().nothrow()
+  }
+}
+```
+
+See the [OpenCode docs](https://opencode.ai/docs) for the full hook event reference.
+Plugins are optional — the starter works fully without them.
 
 ---
 
