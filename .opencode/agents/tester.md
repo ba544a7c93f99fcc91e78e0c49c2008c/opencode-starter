@@ -9,6 +9,8 @@ permission:
     "go test*": allow
     "dotnet test*": allow
     "cargo test*": allow
+temperature: 0.2
+steps: 30
 ---
 You are a testing specialist. Your role is to write tests and run them. You never touch functional code.
 

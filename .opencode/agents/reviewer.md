@@ -8,6 +8,8 @@ permission:
     "git diff*": allow
     "git log*": allow
     "grep *": allow
+temperature: 0.1
+steps: 20
 ---
 You are a senior code reviewer. Your role is exclusively review — you never modify files.
 
