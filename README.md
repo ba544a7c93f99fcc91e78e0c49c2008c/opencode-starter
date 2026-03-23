@@ -217,20 +217,22 @@ npm install -g opencode-ai
 opencode auth github
 ```
 
-**Step 2 — Copy the starter into your project**
+**Step 2 — Clone the starter**
 
 ```bash
-git clone https://github.com/[your-username]/opencode-starter .opencode-starter
-cp .opencode-starter/templates/PLAN.md ./PLAN.md
-cp -r .opencode-starter/.opencode ./.opencode
+git clone https://github.com/[your-username]/opencode-starter myproject
+cd myproject
 ```
 
-**Step 3 — Write your first PLAN.md**
+The project already contains `PLAN.md`, `MEMORY.md`, `BACKLOG.md`, and `HUMAN.md` at the root — no file copying needed.
 
-Don't start with a blank file. Pick an example from [docs/USE-CASES.md](docs/USE-CASES.md), copy the block, and fill in your values. Takes 5 minutes.
+**Step 3 — Write your PLAN.md**
+
+Open `PLAN.md` and replace the content with your mission. Don't start blank — pick an example from [docs/USE-CASES.md](docs/USE-CASES.md) and fill in your values. Takes 5 minutes.
+
+Or let the agent do it: open OpenCode and run `/architect` — it asks targeted questions and writes the plan section by section, waiting for your approval at each step.
 
 See [docs/WRITING-YOUR-PLAN.md](docs/WRITING-YOUR-PLAN.md) for the full guide.
-Alternatively, open OpenCode and run `/architect` — the agent writes PLAN.md for you from a rough description.
 
 **Step 4 — Start your first session**
 
@@ -245,34 +247,38 @@ Type `/onboard` — the agent asks 8 calibration questions (stack, language, per
 ### Already know the stack?
 
 ```bash
-# 1. Copy this repo into your project
-git clone https://github.com/[your-username]/opencode-starter .opencode-starter
-cp .opencode-starter/templates/PLAN.md ./PLAN.md
-cp -r .opencode-starter/.opencode ./.opencode
-
-# 2. Write your PLAN.md, start OpenCode, run /onboard once
+git clone https://github.com/[your-username]/opencode-starter myproject
+cd myproject
+# Edit PLAN.md with your mission
 opencode
+# /onboard on first run, then you're ready
 ```
 
 ---
 
 ## Structure
 
+The starter is itself a functioning opencode project. Clone it, edit `PLAN.md`, and start — no file copying needed. The `templates/` directory contains blank copies for when you want to reset or start a sub-mission.
+
 ```
 opencode-starter/
 │
 ├── AGENTS.md              ← Agent contract (120 lines max, hard limit)
+├── PLAN.md                ← Mission — human writes + approves, agent never modifies
+├── MEMORY.md              ← Agent-managed session context
+├── BACKLOG.md             ← Agent-managed task tracking
+├── HUMAN.md               ← Your pending actions, surfaced by agent
 ├── ONBOARD.md             ← First-run onboarding reference
 │
-├── templates/             ← Copy these into your project root
-│   ├── PLAN.md            ← Human writes + approves. Read-only for agent.
-│   ├── PROPOSAL.md        ← Agent drafts with /propose. Human approves.
-│   ├── MEMORY.md          ← Agent manages — session context
-│   ├── BACKLOG.md         ← Agent manages — task tracking
-│   ├── HUMAN.md           ← Your pending action items, surfaced by agent
-│   ├── DEPENDENCIES.md    ← Verified at every session start
+├── templates/             ← Blank copies — use to reset or start a new mission
+│   ├── PLAN.md
+│   ├── PROPOSAL.md        ← Agent drafts with /propose, human approves
+│   ├── MEMORY.md
+│   ├── BACKLOG.md
+│   ├── HUMAN.md
+│   ├── DEPENDENCIES.md    ← Track versions, verified at session start
 │   ├── CLOUD-RESOURCES.md ← Lab vs prod safety map
-│   └── DEVELOPER-PROFILE.md ← Your personal calibration (created by /onboard)
+│   └── DEVELOPER-PROFILE.md ← Personal calibration (created by /onboard)
 │
 ├── .opencode/
 │   ├── commands/          ← Slash commands (9 total)
