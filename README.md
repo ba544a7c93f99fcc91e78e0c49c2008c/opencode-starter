@@ -1,16 +1,37 @@
 # opencode-starter
 
-> A pragmatic, opinionated starter kit for [OpenCode](https://opencode.ai) + [GitHub Copilot Premium](https://github.com/features/copilot).
+> A pragmatic, opinionated starter kit for [OpenCode](https://opencode.ai) + [GitHub Copilot](https://github.com/features/copilot).
 
 **One branch. One mission. One clean context.**
 
 ---
 
-## What is this?
+## What problem does this solve?
 
-A minimal system that makes AI agents actually useful on real projects — not toy demos.
+AI coding agents are powerful — but chaotic without structure. Left to their own devices, they:
 
-Built from field experience. Not theory.
+- Lose context between sessions (forget what was decided, why, and what broke)
+- Modify things they shouldn't (tests, PLAN.md, production configs)
+- Execute before verifying ("I'll just run `rm -rf` to clean up")
+- Drift from the original goal halfway through a session
+
+**opencode-starter is a governance layer**, not a framework. It gives the agent a clear contract:
+_human steers, agent executes_ — with guardrails, memory hygiene, and explicit approval gates for anything risky.
+
+No code to install. No dependencies. Copy it, write a PLAN.md, open OpenCode.
+
+---
+
+## Who is this for?
+
+### Solo developers
+You want to ship faster without managing the agent manually every step. Write your mission in PLAN.md once. The agent handles execution, memory, and self-correction — you only approve the risky moves.
+
+### Tech leads / teams
+You want consistent, auditable AI-assisted work across the team. Every agent session is governed by the same contract (AGENTS.md), follows the same proposal workflow (/propose), and runs the same quality gate (make check).
+
+### First-time users of OpenCode
+The starter gives you a working system out of the box. Run `/onboard` first — the agent calibrates to your stack, language preference, and experience level. It takes 5 minutes and you won't need to configure anything else.
 
 ---
 
@@ -25,6 +46,23 @@ The rest is guardrails and memory hygiene.
 
 ---
 
+## Prerequisites
+
+| Requirement | Why | Install |
+|-------------|-----|---------|
+| **Node.js ≥ 18** | Required to install OpenCode via npm | [nodejs.org](https://nodejs.org) |
+| **OpenCode** | The AI agent runtime this starter is built for | `npm install -g opencode-ai` |
+| **GitHub Copilot** | Model provider connected to OpenCode (any active plan) | [github.com/features/copilot](https://github.com/features/copilot) |
+| **git** | Session context, diffs, and review commands depend on it | [git-scm.com](https://git-scm.com) |
+| **Terminal** | POSIX sh (Linux/macOS) or WSL (Windows 10/11) | WSL: `wsl --install` |
+| **python3** | Used by `make validate` and `make self-test` for JSON/YAML parsing | Usually pre-installed on Linux/macOS |
+
+**Windows users:** All Makefile targets work via WSL. For PowerShell without WSL, use `.\make.ps1` instead — same targets, same behavior.
+
+> **Note on GitHub Copilot:** OpenCode connects to GitHub Copilot as its model provider. Any active Copilot plan (Individual, Business, Enterprise) works. Authenticate once with `opencode auth github`.
+
+---
+
 ## Architecture overview
 
 ```mermaid
@@ -33,8 +71,8 @@ flowchart TD
 
     P --> AGENTS["AGENTS.md\n(guardrails contract)"]
 
-    AGENTS --> CORE["Core layer"]
-    AGENTS --> PILLARS["Agentic pillars"]
+    AGENTS --> CORE
+    AGENTS --> PILLARS
 
     subgraph CORE["Core layer"]
         direction LR
@@ -65,7 +103,7 @@ sequenceDiagram
     A->>A: read .agent/AGENT_GUIDE.md  ← step 0 (fast orientation)
     A->>A: read DEVELOPER-PROFILE.md
     alt Profile missing
-        A->>H: /onboard — calibration questions
+        A->>H: /onboard — 8 calibration questions
         H->>A: answers
         A->>A: create DEVELOPER-PROFILE.md
     end
@@ -127,12 +165,12 @@ flowchart TD
 ## Quality gate — `make check`
 
 The Makefile gives every agent a uniform quality gate regardless of project language.
-Auto-detects stack from manifest file at project root.
+Stack is auto-detected from the manifest file at project root (e.g. `package.json`, `go.mod`, `Cargo.toml`…).
 
 ```mermaid
 flowchart LR
-    CH["make check"] --> T["make test\npytest · jest · go test\ncargo test · dotnet test\n+8 more"]
-    CH --> L["make lint\nruff · eslint · golangci-lint\ncargo clippy · dotnet /warnaserror\n+8 more"]
+    CH["make check"] --> T["make test\npytest · jest · go test\ncargo test · dotnet test\n+8 more stacks"]
+    CH --> L["make lint\nruff · eslint · golangci-lint\ncargo clippy · dotnet /warnaserror\n+8 more stacks"]
     CH --> V["make validate\nJSON + YAML syntax\npython3 built-ins"]
 
     T --> R{All pass?}
@@ -140,20 +178,10 @@ flowchart LR
     V --> R
 
     R -->|yes| DONE[✓ Report to human]
-    R -->|no| FIX[Self-correct\nmax 3 attempts]
-    FIX --> CB{3rd attempt?}
+    R -->|no| FIX[Agent self-corrects\nmax 3 attempts]
+    FIX --> CB{3rd failure?}
     CB -->|no| CH
-    CB -->|yes| STOP[Stop — report blocker]
-```
-
-```mermaid
-flowchart LR
-    SELF["make self-test"] --> GA["Group A\nFile existence\n14 files"]
-    SELF --> GB["Group B\nInvariants\nline counts · sections"]
-    SELF --> GC["Group C\nJSON validity\nall tools/*.json"]
-    SELF --> GD["Group D\nFrontmatter\nYAML in commands"]
-    SELF --> GE["Group E\nmap_context.sh\n9 banners + fallbacks"]
-    SELF --> GF["Group F\nStack detection\n13 stacks + precedence"]
+    CB -->|yes| STOP[Stop — report blocker\nto human]
 ```
 
 **Supported stacks:** python · node (JS/TS) · go · rust · dotnet (C#) · java-maven · java-gradle · cmake (C/C++) · php · swift · ruby · terraform · helm
@@ -177,16 +205,15 @@ flowchart LR
 
 ## Get started
 
-### New to OpenCode + GitHub Copilot?
+### New to OpenCode?
 
-**Step 1 — Install the tools**
+**Step 1 — Install**
 
 ```bash
-# Install OpenCode
+# Install Node.js first if needed: https://nodejs.org
 npm install -g opencode-ai
 
-# GitHub Copilot Premium: activate at github.com/features/copilot
-# Then authenticate OpenCode with your GitHub account
+# Connect to GitHub Copilot (browser prompt opens)
 opencode auth github
 ```
 
@@ -203,6 +230,7 @@ cp -r .opencode-starter/.opencode ./.opencode
 Don't start with a blank file. Pick an example from [docs/USE-CASES.md](docs/USE-CASES.md), copy the block, and fill in your values. Takes 5 minutes.
 
 See [docs/WRITING-YOUR-PLAN.md](docs/WRITING-YOUR-PLAN.md) for the full guide.
+Alternatively, open OpenCode and run `/architect` — the agent writes PLAN.md for you from a rough description.
 
 **Step 4 — Start your first session**
 
@@ -210,7 +238,7 @@ See [docs/WRITING-YOUR-PLAN.md](docs/WRITING-YOUR-PLAN.md) for the full guide.
 opencode
 ```
 
-Type `/onboard` — the agent asks 8 calibration questions and creates your developer profile. This runs once, then every session starts directly from your `PLAN.md`.
+Type `/onboard` — the agent asks 8 calibration questions (stack, language, personality, cloud environment…) and creates your developer profile. This runs once. Every session after that starts directly from your `PLAN.md`.
 
 ---
 
@@ -219,12 +247,10 @@ Type `/onboard` — the agent asks 8 calibration questions and creates your deve
 ```bash
 # 1. Copy this repo into your project
 git clone https://github.com/[your-username]/opencode-starter .opencode-starter
-
-# 2. Copy the templates you need
 cp .opencode-starter/templates/PLAN.md ./PLAN.md
 cp -r .opencode-starter/.opencode ./.opencode
 
-# 3. Write your PLAN.md, open OpenCode, type /onboard
+# 2. Write your PLAN.md, start OpenCode, run /onboard once
 opencode
 ```
 
@@ -235,52 +261,53 @@ opencode
 ```
 opencode-starter/
 │
-├── AGENTS.md              ← Agent instructions (120 lines max)
-├── ONBOARD.md             ← First-run setup
+├── AGENTS.md              ← Agent contract (120 lines max, hard limit)
+├── ONBOARD.md             ← First-run onboarding reference
 │
-├── templates/             ← Copy these into your project
-│   ├── PLAN.md            ← Human approves this. Read-only for agent.
+├── templates/             ← Copy these into your project root
+│   ├── PLAN.md            ← Human writes + approves. Read-only for agent.
 │   ├── PROPOSAL.md        ← Agent drafts with /propose. Human approves.
-│   ├── MEMORY.md          ← Agent manages this
-│   ├── BACKLOG.md         ← Agent manages this
-│   ├── HUMAN.md           ← Your action items, surfaced by agent
+│   ├── MEMORY.md          ← Agent manages — session context
+│   ├── BACKLOG.md         ← Agent manages — task tracking
+│   ├── HUMAN.md           ← Your pending action items, surfaced by agent
 │   ├── DEPENDENCIES.md    ← Verified at every session start
 │   ├── CLOUD-RESOURCES.md ← Lab vs prod safety map
-│   └── DEVELOPER-PROFILE.md ← Your personal calibration
+│   └── DEVELOPER-PROFILE.md ← Your personal calibration (created by /onboard)
 │
 ├── .opencode/
-│   ├── commands/          ← Slash commands
-│   │   ├── onboard.md     ← /onboard
-│   │   ├── architect.md   ← /architect
-│   │   ├── propose.md     ← /propose
-│   │   ├── map.md         ← /map
-│   │   ├── compact.md     ← /compact
-│   │   ├── review.md      ← /review
-│   │   ├── test.md        ← /test
-│   │   └── debug.md       ← /debug
+│   ├── commands/          ← Slash commands (9 total)
+│   │   ├── onboard.md     ← /onboard   — first-run profile setup
+│   │   ├── architect.md   ← /architect — generate PLAN.md interactively
+│   │   ├── propose.md     ← /propose   — draft PROPOSAL.md before big changes
+│   │   ├── map.md         ← /map       — map project scoped to PLAN.md
+│   │   ├── compact.md     ← /compact   — condense and archive memory
+│   │   ├── review.md      ← /review    — code review on modified files
+│   │   ├── test.md        ← /test      — run tests, produce report
+│   │   ├── debug.md       ← /debug     — diagnose blocked agents
+│   │   └── profile.md     ← /profile   — display active config (see Easter eggs)
 │   │
 │   ├── agents/            ← Specialized sub-agents
-│   │   ├── reviewer.md    ← Read-only code reviewer
-│   │   ├── tester.md      ← Test writer (Haiku model)
-│   │   └── explorer.md    ← Read-only discovery & mapping
+│   │   ├── reviewer.md    ← Read-only code reviewer (Sonnet)
+│   │   ├── tester.md      ← Test writer only, never functional code (Haiku)
+│   │   └── explorer.md    ← Read-only discovery & mapping (Sonnet)
 │   │
-│   └── skills/            ← Domain expertise, loaded on demand
+│   └── skills/            ← Domain expertise loaded on demand
 │       ├── azure/SKILL.md
 │       ├── openshift/SKILL.md
 │       └── terraform/SKILL.md
 │
 ├── .agent/                ← AI-first discoverability (Pillar 1)
-│   ├── AGENT_GUIDE.md     ← Machine-readable session index (YAML)
-│   └── map_context.sh     ← Compressed context snapshot
+│   ├── AGENT_GUIDE.md     ← Machine-readable session index (YAML blocks)
+│   └── map_context.sh     ← Compressed context snapshot (~200 lines output)
 │
-├── Makefile               ← Quality gate: test/lint/format/validate/check/self-test
+├── Makefile               ← Quality gate: 13-stack auto-detection
 ├── make.ps1               ← Same targets for Windows 10/11 (PowerShell)
 │
 ├── tools/                 ← MCP-compatible tool definitions (Pillar 4)
 │   ├── tools-manifest.json
 │   ├── run-tests.json
 │   ├── run-lint.json
-│   ├── run-format.json    ← write_gate: true
+│   ├── run-format.json    ← write_gate: true (requires "go")
 │   ├── generate-map.json
 │   ├── scan-security.json
 │   └── git-review.json
@@ -288,27 +315,27 @@ opencode-starter/
 ├── tests/
 │   └── run.sh             ← Self-test suite (69 tests, zero dependencies)
 │
-├── memory/                ← Local only, git-ignored
+├── memory/                ← Local only — git-ignored
 └── docs/
-    ├── PHILOSOPHY.md
-    ├── CUSTOMIZE.md
+    ├── PHILOSOPHY.md      ← 5 founding principles
+    ├── CUSTOMIZE.md       ← 5-level customization guide
     ├── PILLARS.md         ← Full 4-pillar documentation
-    ├── USE-CASES.md
-    └── ADVANCED.md
+    ├── USE-CASES.md       ← Ready-to-copy PLAN.md examples
+    └── ADVANCED.md        ← Segmented memory, parallel agents, hooks, RAG
 ```
 
 ---
 
 ## Agentic Pillars
 
-Four capability layers extending the base system. Full docs → [docs/PILLARS.md](docs/PILLARS.md)
+Four capability layers on top of the base system. Full docs → [docs/PILLARS.md](docs/PILLARS.md)
 
 | # | Pillar | Location | What it adds |
 |---|--------|----------|--------------|
-| 1 | AI-First Discoverability | `.agent/` | YAML session index + compressed snapshot script |
-| 2 | Planning Protocol | `templates/PROPOSAL.md` + `/propose` | Agent-authored proposals, human-approved before execution |
+| 1 | AI-First Discoverability | `.agent/` | YAML session index + `map_context.sh` for fast orientation |
+| 2 | Planning Protocol | `templates/PROPOSAL.md` + `/propose` | Agent drafts proposals, human approves before execution |
 | 3 | Self-Correction Loop | `Makefile` / `make.ps1` | 13-stack quality gate: test · lint · format · validate · check |
-| 4 | Tool Abstraction | `tools/` | JSON Schema definitions + MCP-compatible manifest |
+| 4 | Tool Abstraction | `tools/` | JSON Schema definitions + MCP-compatible manifest (6 tools) |
 
 ---
 
@@ -316,54 +343,65 @@ Four capability layers extending the base system. Full docs → [docs/PILLARS.md
 
 | Command | What it does |
 |---------|-------------|
-| `/onboard` | First-run profile setup. Skips if profile exists. |
-| `/architect` | Generate PLAN.md from a rough intent — targeted questions, section-by-section approval. |
-| `/propose` | Draft PROPOSAL.md before a major change — present to human, execute only after "go". |
-| `/map` | Map the project scoped to PLAN.md. Updates PROJECT-MAP.md. |
-| `/compact` | Summarize and archive memory when it gets heavy. |
-| `/review` | Trigger reviewer agent on modified files. |
-| `/test` | Trigger tester agent, run tests, get report. |
-| `/debug` | Diagnose a blocked agent — surfaces contradictions and the human decision needed to unblock. |
+| `/onboard` | First-run calibration — 8 questions, creates `DEVELOPER-PROFILE.md`. Skips if profile exists. |
+| `/architect` | Generate `PLAN.md` interactively — targeted questions, section-by-section approval before writing. |
+| `/propose` | Draft `PROPOSAL.md` before a major change. Presents to human, executes only after explicit "go". |
+| `/map` | Map the codebase scoped to `PLAN.md`. Creates or updates `PROJECT-MAP.md`. |
+| `/compact` | Condense `MEMORY.md` and archive to `memory/archive/` when it exceeds 500 lines. |
+| `/review` | Trigger `@reviewer` on files modified since last commit. Returns structured report. |
+| `/test` | Trigger `@tester`, run the test suite, return report. Failures go back to `@build`, never modify tests. |
+| `/debug` | Diagnose a blocked agent — surfaces the contradiction and the human decision needed to unblock. |
 
 ---
 
 ## Sub-agents
 
-| Agent | Role | Model |
-|-------|------|-------|
-| `@reviewer` | Code review — read-only, never modifies | Sonnet |
-| `@tester` | Tests only — never writes functional code | Haiku |
-| `@explorer` | Discovery & mapping — read-only | Sonnet |
+| Agent | Role | Model | Write? |
+|-------|------|-------|--------|
+| `@reviewer` | Code review — reads diffs, never modifies | Sonnet | No |
+| `@tester` | Writes tests only — never writes functional code | Haiku | Tests only |
+| `@explorer` | Discovery & codebase mapping — read-only | Sonnet | No |
 
-**Hard rule on tests:** `@tester` writes tests. `@build` writes code. Never together.
-A test is never modified to make it pass. Root cause is reported to human.
+**Hard rule:** `@tester` writes tests. `@build` writes code. Never the same agent.
+A test is never modified to make it pass — root cause is always reported to the human.
 
 ---
 
 ## Makefile quick reference
 
-| Target | Description | Write? |
+| Target | What it runs | Write? |
 |--------|-------------|--------|
-| `make test` | Run the project test suite | No |
-| `make lint` | Run the linter | No |
+| `make test` | Project test suite (auto-detected) | No |
+| `make lint` | Linter (auto-detected) | No |
 | `make format` | Auto-format source code | **Yes — requires "go"** |
-| `make validate` | Validate JSON + YAML syntax | No |
-| `make check` | test + lint + validate (all independent) | No |
-| `make map` | Generate compressed context snapshot | No |
-| `make self-test` | Run the starter's own 69-test suite | No |
+| `make validate` | JSON + YAML syntax check (python3) | No |
+| `make check` | test + lint + validate, all independent | No |
+| `make map` | Run `.agent/map_context.sh` | No |
+| `make self-test` | Starter's own 69-test structural suite | No |
 | `make help` | List targets + detected stack | No |
 
-Windows: use `.\make.ps1 <target>` instead (PowerShell, no WSL required for most targets).
+Windows without WSL: `.\make.ps1 <target>` — same targets, PowerShell implementation.
 
 ---
 
 ## Absolute rules
 
-- `PLAN.md` — Read-only. Always. Conflict → flag to human.
-- Destructive commands → Show command + target + env + impact. Wait for **"go"**.
-- `memory/` → Agent-only. Human doesn't touch it.
-- Tests → Never modified to pass. Root cause always reported.
-- Changes touching > 3 files or with regression risk → run `/propose` first.
+- `PLAN.md` — Read-only. Always. Agent never modifies it. Conflict → flag to human.
+- Changes touching > 3 files or with regression risk → `/propose` first, wait for "go".
+- Write operations → Show command + target + environment + impact. Wait for **"go"**.
+- `memory/` → Agent-managed. Human doesn't touch it directly.
+- Tests → Never modified to make them pass. Root cause always reported.
+
+---
+
+## Easter eggs
+
+Two commands that aren't part of the core workflow — but useful to know.
+
+| Command | What it does |
+|---------|-------------|
+| `/profile` | Display active developer profile + all configured agents and commands. Quick audit of your setup. |
+| `/joke` | One programming/DevOps joke. Dry humor preferred. No explanation after the punchline. |
 
 ---
 
@@ -373,7 +411,7 @@ Windows: use `.\make.ps1 <target>` instead (PowerShell, no WSL required for most
 
 - Use a dedicated service account or sandbox identity — never your personal admin credentials
 - In cloud environments: scope IAM/RBAC roles to the target resource group or namespace only
-- The agent will always ask for **"go"** before any write operation — never bypass this
+- The agent always asks for **"go"** before any write operation — never bypass this
 - For production access: use read-only credentials by default; grant write only for the specific operation
 
 > This project follows the **read-free / write-gate** principle: read operations run freely, write operations always require explicit human approval.
@@ -392,22 +430,26 @@ See [docs/ADVANCED.md](docs/ADVANCED.md) for segmented memory, session versionin
 
 See [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md).
 
-TL;DR: **Keep memory alive.** Memory that grows without control becomes noise.
+Five principles: human steers / one branch = one mission / simple first / native OpenCode / keep memory alive.
+
+TL;DR: **Memory that grows without control becomes noise.**
 Create → Enrich → Compact → Archive → Repeat.
 
 ---
 
 ## Why not LangGraph / CrewAI / framework X?
 
-Those are great for enterprise multi-agent systems.
-This is for a solo developer who wants to ship faster without reading 200 pages of docs first.
+Those are great for enterprise multi-agent orchestration pipelines.
+This is for a developer who wants to ship faster without reading 200 pages of docs first.
+
+No dependencies. No installation. No reinvention. Just a contract between you and the agent.
 
 ---
 
 ## Built with
 
 - [OpenCode](https://opencode.ai) — AI coding agent built for the terminal
-- [GitHub Copilot Premium](https://github.com/features/copilot) — AI pair programmer with advanced models
+- [GitHub Copilot](https://github.com/features/copilot) — model provider, connects via `opencode auth github`
 
 ---
 
