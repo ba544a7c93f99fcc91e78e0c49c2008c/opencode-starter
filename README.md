@@ -421,7 +421,7 @@ Two commands that aren't part of the core workflow — but useful to know.
 - For production access: use read-only credentials by default; grant write only for the specific operation
 
 > This project follows the **read-free / write-gate** principle: read operations run freely, write operations always require explicit human approval.
-> See [GUARDRAILS.md](https://guardrails.md/) and the [AGENTS.md standard](https://github.com/agentsmd/agents.md) for the broader conventions this project aligns with.
+> See the [AGENTS.md standard](https://github.com/agentsmd/agents.md) for the broader conventions this project aligns with.
 
 ---
 

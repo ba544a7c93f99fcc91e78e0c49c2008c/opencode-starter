@@ -61,7 +61,7 @@ files:
 ## Available Tools
 
 ```yaml
-commands: [onboard, architect, map, compact, review, test, debug, propose]
+commands: [onboard, architect, map, compact, review, test, debug, propose, profile, joke]
 agents:   [reviewer, tester, explorer]
 skills:   [azure, openshift, terraform]
 makefile: [test, lint, format, validate, check, map, help]
