@@ -39,6 +39,7 @@ for f in \
     make.ps1 \
     .opencode/commands/propose.md \
     docs/PILLARS.md \
+    opencode.json \
     tools/tools-manifest.json \
     tools/run-tests.json \
     tools/run-lint.json \
@@ -79,6 +80,7 @@ fi
 printf '\n=== Group C: JSON validity ===\n'
 
 for f in \
+    opencode.json \
     tools/run-tests.json \
     tools/run-lint.json \
     tools/run-format.json \
