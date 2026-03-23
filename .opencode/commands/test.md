@@ -1,6 +1,7 @@
 ---
 description: Trigger tests and produce a report
 agent: tester
+subtask: true
 ---
 Identify the test framework used in the project:
 - `package.json` → Jest, Vitest, Mocha

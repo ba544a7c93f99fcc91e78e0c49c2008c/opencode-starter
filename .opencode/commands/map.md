@@ -1,6 +1,7 @@
 ---
 description: Map the project scoped to PLAN.md
 agent: explorer
+subtask: true
 ---
 Read `PLAN.md` to identify the mission scope.
 

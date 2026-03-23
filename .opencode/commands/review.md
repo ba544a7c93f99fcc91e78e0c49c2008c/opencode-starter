@@ -1,6 +1,7 @@
 ---
 description: Trigger code review on modified files
 agent: reviewer
+subtask: true
 ---
 Identify files modified since the last commit:
 
